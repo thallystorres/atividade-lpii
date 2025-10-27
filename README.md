@@ -1,15 +1,16 @@
+```mermaid
 classDiagram
-class Pessoa {
--int id
--string nome
--string cpf
-+Pessoa(int id, string nome, string cpf)
-+mostrarDados() void
-+setNome(string nome) void
-+getId() int
-+getNome() string
-+getCpf() string
-}
+    class Pessoa {
+        -int id
+        -string nome
+        -string cpf
+        +Pessoa(int id, string nome, string cpf)
+        +mostrarDados() void
+        +setNome(string nome) void
+        +getId() int
+        +getNome() string
+        +getCpf() string
+    }
 
     class Cliente {
         -string endereco
