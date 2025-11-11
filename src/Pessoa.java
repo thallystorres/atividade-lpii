@@ -1,4 +1,4 @@
-public class Pessoa implements Mostravel {
+public abstract class Pessoa implements Mostravel {
     final private int id;
     private String nome;
     final private String cpf;

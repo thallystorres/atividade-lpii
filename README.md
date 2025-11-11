@@ -1,6 +1,18 @@
 ```mermaid
 classDiagram
+    class StatusPedido {
+        <<Enumeration>>
+        AGURDANDO_PAGAMENTO,
+        PAGO,
+        CANCELADO
+    }
+    class Mostravel {
+        <<Interface>>
+        +mostrarDados() void
+    }
+
     class Pessoa {
+        <<Abstrata>>
         -int id
         -string nome
         -string cpf
@@ -14,7 +26,7 @@ classDiagram
 
     class Cliente {
         -string endereco
-        -vector~Pedido~ pedidos
+        -arrayList~Pedido~ pedidos
         +Cliente(int id, string nome, string cpf, string endereco)
         +getEndereco() string
         +mostrarDados() void
@@ -41,25 +53,25 @@ classDiagram
         -int id
         -string nome
         -double preco
-        -Categoria* categoria
-        +Produto(int id, string nome, double preco, Categoria* categoria)
+        -Categoria categoria
+        +Produto(int id, string nome, double preco, Categoria categoria)
         +getId() int
         +getNome() string
         +getPreco() double
-        +getCategoria() Categoria*
+        +getCategoria() Categoria
         +mostrarDados() void
     }
 
     class Pedido {
         -int id
         -string data
-        -vector~Produto*~ produtos
+        -arrayList~Produto~ produtos
         -Pagamento pagamento
         -StatusPedido status
         +Pedido(int id, string data)
         +getPagamento() Pagamento
         +marcarComoPago() void
-        +adicionarProduto(Produto* produto) void
+        +adicionarProduto(Produto produto) void
         +calcularTotal() double
         +mostrarDados() void
     }
@@ -74,34 +86,37 @@ classDiagram
     }
     
     class Cardapio {
-        -vector~Categoria~ categorias
-        -vector~Produto~ produtos
+        -arrayList~Categoria~ categorias
+        -arrayList~Produto~ produtos
         -int proximaCategoriaId
         -int proximoProdutoId
         +adicionarCategoria(string nome) void
-        +buscarCategoriaPorId(int id) Categoria*
-        +listarCategorias() void
+        +buscarCategoriaPorId(int id) Categoria
+        +listarCategoria() void
         +adicionarProduto(string nome, double preco, int categoriaId) void
-        +buscarProdutoPorId(int id) Produto*
+        +buscarProdutoPorId(int id) Produto
         +listarProdutos() void
         +removerProduto(int id) void
     }
 
     class GerenciadorClientes {
-        -vector~Cliente~ clientes
+        -arrayList~Cliente~ clientes
         -int proximoClienteId
         +adicionarCliente(string nome, string cpf, string endereco) void
-        +buscarClientePorId(int id) Cliente*
+        +buscarClientePorId(int id) Cliente
         +listarClientes() void
     }
 
     class Comanda {
-        -vector~Pedido~ todosOsPedidos
+        -arrayList~Pedido~ pedidos
         -int proximoPedidoId
         +registrarPedido(Pedido pedido) void
         +getProximoId() int
     }
 
+    Mostravel <|-- Pessoa
+    Mostravel <|-- Categoria
+    Mostravel <|-- Produto
     Pessoa <|-- Cliente
     Pessoa <|-- Funcionario
     
