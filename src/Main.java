@@ -1,7 +1,13 @@
 import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        Configuracao config = new Configuracao();
+        config.carregarPreferencias();
+        if(config.getNomeUsuario() == null) {
+            config.definirPreferencias(scanner);
+        }
         Cardapio cardapio = new Cardapio();
         GerenciadorDeClientes clientesManager = new GerenciadorDeClientes();
         Comanda pedidosManager = new Comanda();
@@ -10,22 +16,22 @@ public class Main {
         do {
             Utils.exibirUtilsPrincipal();
 
-            if(!scanner.hasNextInt()){
+            if(! scanner.hasNextInt()) {
                 System.out.println("Erro: entrada inválida. Por favor, digite um número.");
                 scanner.nextLine();
-                opcao = -1;
+                opcao = - 1;
                 continue;
             }
             opcao = scanner.nextInt();
             scanner.nextLine();
 
-            switch (opcao) {
+            switch(opcao) {
                 case 1 -> Utils.logicaUtilsCardapio(cardapio, scanner);
                 case 2 -> Utils.logicaUtilsClientes(clientesManager, scanner);
-                case 3 -> Utils.logicaRealizarPedido(pedidosManager, cardapio, clientesManager,scanner);
+                case 3 -> Utils.logicaRealizarPedido(pedidosManager, cardapio, clientesManager, scanner);
                 case 0 -> System.out.println("Encerrando o sistema. Até logo!");
                 default -> System.out.println("Opção inválida. Por favor, tente novamente.");
             }
-        } while (opcao != 0);
+        } while(opcao != 0);
     }
 }

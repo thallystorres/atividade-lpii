@@ -62,8 +62,11 @@ public class Utils {
 
                     System.out.print("Digite o endereço do cliente: ");
                     String endereco = scanner.nextLine();
-
-                    clientesManager.adicionarCliente(nome, cpf, endereco);
+                    try {
+                        clientesManager.adicionarCliente(nome, cpf, endereco);
+                    } catch(ValidacaoException e) {
+                        System.err.println("Erro ao cadastrar cliente: " + e.getMessage());
+                    }
                     break;
                 }
                 case 2:
@@ -112,7 +115,7 @@ public class Utils {
             cardapio.listarProdutos();
             System.out.print("\nDigite o ID do produto para adicionar (ou 0 para finalizar): ");
 
-            if (!scanner.hasNextInt()){
+            if(! scanner.hasNextInt()) {
                 System.out.println("Entrada inválida. Tente novamente.");
                 scanner.nextLine();
                 continue;
@@ -120,22 +123,21 @@ public class Utils {
             produtoId = scanner.nextInt();
             scanner.nextLine();
             if(produtoId != 0)
-                try{
+                try {
                     Produto produto = cardapio.buscarProdutoPorId(produtoId);
                     novoPedido.adicionarProduto(produto);
                     System.out.println("'" + produto.getNome() + "' adicionado ao pedido.");
                 } catch(RuntimeException e) {
                     System.err.println("ERRO: " + e.getMessage() + ". Tente novamente.");
                 }
-        } while (produtoId != 0);
-        if (novoPedido.calcularTotal() > 0) {
+        } while(produtoId != 0);
+        if(novoPedido.calcularTotal() > 0) {
             System.out.println("\n--- Resumo do Pedido ---");
             novoPedido.mostrarDados();
 
             System.out.println("\n--- Processar Pagamento ---");
             System.out.println("1. Cartão de Crédito");
             System.out.println("2. Pix");
-            System.out.println("3. Dinheiro");
             System.out.println("0. Cancelar pagamento");
             System.out.print("Escolha o método de pagamento: ");
 
@@ -148,13 +150,25 @@ public class Utils {
             metodoOpcao = scanner.nextInt();
             scanner.nextLine();
 
-            String metodoEscolhido = "";
+            Pagamento metodoEscolhido = null;
             boolean pagamentoRecusado = false;
 
             switch(metodoOpcao) {
-                case 1 -> metodoEscolhido = "Cartão de Crédito";
-                case 2 -> metodoEscolhido = "Pix";
-                case 3 -> metodoEscolhido = "Dinheiro";
+                case 1 -> {
+                    System.out.print("Em quantas parcelas deseja dividir? (Máx 12): ");
+                    int qtdParcelas = 1;
+
+                    if(scanner.hasNextInt()) {
+                        qtdParcelas = scanner.nextInt();
+                        scanner.nextLine();
+                    } else {
+                        scanner.nextLine();
+                        System.out.println("Entrada inválida. Considerando pagamento à vista (1x).");
+                    }
+
+                    metodoEscolhido = new PagamentoCartao(novoPedido.getId(), qtdParcelas);
+                }
+                case 2 -> metodoEscolhido = new PagamentoPix(novoPedido.getId());
                 case 0 -> {
                     System.out.println("Pagamento cancelado pelo usuário.");
                     pagamentoRecusado = true;
@@ -166,11 +180,9 @@ public class Utils {
             }
 
             if(! pagamentoRecusado) {
-                Pagamento pagamentoDoPedido = novoPedido.getPagamento();
-                pagamentoDoPedido.processarPagamento(metodoEscolhido, novoPedido.calcularTotal());
-
+                novoPedido.setPagamento(metodoEscolhido);
+                metodoEscolhido.processarPagamento(novoPedido.calcularTotal());
                 novoPedido.marcarComoPago();
-
                 System.out.println("\n--- Pedido Finalizado ---");
                 novoPedido.mostrarDados();
                 cliente.adicionarPedido(novoPedido);
@@ -183,21 +195,21 @@ public class Utils {
         }
     }
 
-    public static void logicaUtilsCardapio(Cardapio cardapio, Scanner scanner){
+    public static void logicaUtilsCardapio(Cardapio cardapio, Scanner scanner) {
         int opcao;
         do {
             exibirSubUtilsCardapio();
 
-            if(!scanner.hasNextInt()){
+            if(! scanner.hasNextInt()) {
                 System.out.println("Erro: Entrada inválida. Por favor, digite um número.");
                 scanner.nextLine();
-                opcao = -1;
+                opcao = - 1;
                 continue;
             }
             opcao = scanner.nextInt();
             scanner.nextLine();
             try {
-                switch(opcao){
+                switch(opcao) {
                     case 1 -> {
                         System.out.print("Digite o nome da nova categoria: ");
                         String nomeCat = scanner.nextLine();
@@ -208,7 +220,7 @@ public class Utils {
                         String nomeProd = scanner.nextLine();
 
                         System.out.print("Digite o preço do produto: ");
-                        if(!scanner.hasNextDouble()){
+                        if(! scanner.hasNextDouble()) {
                             System.out.println("Erro: preço inválido.");
                             scanner.nextLine();
                             break;
@@ -216,20 +228,15 @@ public class Utils {
                         double preco = scanner.nextDouble();
                         scanner.nextLine();
 
-                        if (preco < 0) {
-                            System.out.println("Erro: preço não pode ser negativo.");
-                            break; // volta para o menu ou loop
-                        }
                         cardapio.listarCategoria();
                         System.out.print("Digite o ID da categoria do produto: ");
-                        if (!scanner.hasNextInt()){
+                        if(! scanner.hasNextInt()) {
                             System.out.println("Erro: ID inválido.");
                             scanner.nextLine();
                             break;
                         }
                         int catId = scanner.nextInt();
                         scanner.nextLine();
-
                         cardapio.adicionarProduto(nomeProd, preco, catId);
                     }
                     case 3 -> cardapio.listarCategoria();
@@ -238,7 +245,7 @@ public class Utils {
                     case 5 -> {
                         cardapio.listarProdutos();
                         System.out.print("Digite o ID do produto a ser removido: ");
-                        if (!scanner.hasNextInt()){
+                        if(! scanner.hasNextInt()) {
                             System.out.println("Erro: entrada inválida.");
                             scanner.nextLine();
                             break;
@@ -254,8 +261,9 @@ public class Utils {
             } catch(RuntimeException e) {
                 System.err.println("ERRO: " + e.getMessage());
             }
-        } while (opcao != 0);
+        } while(opcao != 0);
     }
+
     public static <T extends Mostravel> void listarItens(String titulo, List<T> itens) {
         System.out.println("\n--- " + titulo + " ---");
         if(itens.isEmpty()) {

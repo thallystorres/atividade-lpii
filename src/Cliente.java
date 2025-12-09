@@ -4,7 +4,7 @@ public class Cliente extends Pessoa {
     final private String endereco;
     private ArrayList<Pedido> pedidos = new ArrayList<>();
 
-    public Cliente(int id, String nome, String cpf, String endereco) {
+    public Cliente(int id, String nome, String cpf, String endereco) throws ValidacaoException {
         super(id, nome, cpf);
         this.endereco = endereco;
     }

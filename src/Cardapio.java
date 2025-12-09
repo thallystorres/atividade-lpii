@@ -1,5 +1,3 @@
-import jdk.jshell.execution.Util;
-
 import java.util.ArrayList;
 
 public class Cardapio {
@@ -29,8 +27,8 @@ public class Cardapio {
         try {
             Categoria categoriaDoProduto = this.buscarCategoriaPorId(categoriaId);
             produtos.add(new Produto(this.proximoProdutoId++, nome, preco, categoriaDoProduto));
-        } catch(RuntimeException e) {
-            System.err.println("Não foi possível adicionar o produto: " + e);
+        } catch(ValidacaoException e) {
+            System.err.println("Não foi possível adicionar o produto: " + e.getMessage());
         }
     }
 
@@ -44,12 +42,12 @@ public class Cardapio {
     }
 
     public void listarProdutos() {
-        Utils.listarItens("CARDÁPIO COMPLETO",produtos);
+        Utils.listarItens("CARDÁPIO COMPLETO", produtos);
     }
 
-    public void removeProduto(int id){
-        for(Produto produto : produtos){
-            if(produto.getId() == id){
+    public void removeProduto(int id) {
+        for(Produto produto: produtos) {
+            if(produto.getId() == id) {
                 produtos.remove(produto);
                 System.out.println("Produto removido com sucesso.");
                 return;

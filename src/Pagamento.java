@@ -1,21 +1,21 @@
-public class Pagamento {
-    final private int idPedido;
-    private String metodo;
-    private boolean efetuado;
+public abstract class Pagamento {
+    protected int idPedido;
+    protected boolean efetuado;
 
     public Pagamento(int idPedido) {
         this.idPedido = idPedido;
+        this.efetuado = false;
     }
 
-    public void processarPagamento(String metodoPagamento, double valor) {
-        this.metodo = metodo;
-        this.efetuado = true;
-        System.out.println("Pagamento de R$" + valor + "processado em " + metodo + ".");
+    public abstract void processarPagamento(double valor);
+
+    public boolean isEfetuado() {
+        return efetuado;
     }
 
     @Override
     public String toString() {
-        return "Detalhes do pagamento (Pedido " + this.idPedido + "): " + (efetuado ? "Método: " + this.metodo + " | "
-                + "Status: Efetuado" : "Status: Pagamento não realizados");
+        return "Detalhes do pagamento (Pedido " + this.idPedido + "): " + (efetuado ? "Status: Efetuado" :
+                "Status: " + "Pagamento não realizados");
     }
 }

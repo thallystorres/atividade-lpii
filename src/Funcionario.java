@@ -2,7 +2,7 @@ public class Funcionario extends Pessoa {
     final private String cargo;
     final private double salario;
 
-    public Funcionario(int id, String nome, String cpf, String cargo, double salario) {
+    public Funcionario(int id, String nome, String cpf, String cargo, double salario) throws ValidacaoException {
         super(id, nome, cpf);
         this.cargo = cargo;
         this.salario = salario;

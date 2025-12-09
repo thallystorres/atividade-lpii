@@ -4,13 +4,20 @@ public class Pedido {
     final private int id;
     final private String data;
     final private ArrayList<Produto> produtos = new ArrayList<>();
-    final private Pagamento pagamento;
+    private Pagamento pagamento;
     StatusPedido status = StatusPedido.AGUARDANDO_PAGAMENTO;
 
     public Pedido(int id, String data) {
         this.id = id;
         this.data = data;
-        this.pagamento = new Pagamento(id);
+    }
+
+    public void setPagamento(Pagamento pagamento) {
+        this.pagamento = pagamento;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public Pagamento getPagamento() {
